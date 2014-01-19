@@ -27,13 +27,13 @@ module SnakeGame
     end
 
     def update
-      update_food_lives
-      update_life_lives if @life
+      update_food_remain_time_on_the_board
+      update_life_remain_time_on_the_board if @life
 
       if @life == nil
         @local_time_to_new_life = @local_time_to_new_life - 1
         set_life if @local_time_to_new_life == 0
-      elsif @life.lives == 0
+      elsif @life.remain_time == 0
         @world[@life.coords.x][@life.coords.y] = nil
         @life = nil
         @local_time_to_new_life = @time_to_new_life
@@ -85,18 +85,18 @@ module SnakeGame
     end
 
     #private
-    def update_food_lives
+    def update_food_remain_time_on_the_board
       @food.each.with_index do |food, i|
-        food.lives = food.lives - 1
-        if food.lives == 0
+        food.remain_time = food.remain_time - 1
+        if food.remain_time == 0
           @world[food.coords.x][food.coords.y] = nil
           update_food(food)
         end
       end
     end
 
-    def update_life_lives
-      @life.lives = @life.lives - 1
+    def update_life_remain_time_on_the_board
+      @life.remain_time = @life.remain_time - 1
     end
 
     def set_life

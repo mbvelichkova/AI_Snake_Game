@@ -19,7 +19,7 @@ module SnakeGame
 
     def move(direction)
       if direction.opposite_direction(@direction)
-        raise IllegalMove, 'Opposite direction move is not allowed!'
+        puts 'Opposite direction move is not allowed!'
         return
       end
 

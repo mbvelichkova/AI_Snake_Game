@@ -10,11 +10,11 @@ module SnakeGame
   
   class Food < WorldObject
     attr_reader :energy, :set_food_count
-    attr_accessor :lives
+    attr_accessor :remain_time
     
-    def initialize(coords, energy, lives, set_food_count)
+    def initialize(coords, energy, remain_time, set_food_count)
       @energy = energy
-      @lives = lives
+      @remain_time = remain_time
       @set_food_count = set_food_count
       super(coords)
     end
@@ -48,11 +48,11 @@ module SnakeGame
   end
   
   class Life < WorldObject
-    attr_accessor :lives
+    attr_accessor :remain_time
     
     def initialize(coords)
       super(coords)
-      @lives = 17
+      @remain_time = 17
       @image = 'L'
     end
   end
@@ -77,4 +77,13 @@ module SnakeGame
       @image = 'H'
     end
   end
+	
+	class Tunnel < WorldObject
+		attr_reader :start, :exit
+		def initialize(start, exit)
+			super(start)
+			@start, @exit = start, exit
+			@image = 'T'
+		end
+	end
 end

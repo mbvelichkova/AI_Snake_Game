@@ -20,6 +20,12 @@ class Vector
   def ==(other)
     x == other.x and y == other.y
   end
+	
+	alias eql? ==
+	
+	def hash
+		[@x, @y].hash
+	end
   
   def -@
     Vector.new(-x, -y)
