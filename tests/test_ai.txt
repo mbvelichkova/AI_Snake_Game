@@ -1,0 +1,23 @@
+  load "ai_movement.rb"
+  include SnakeGame
+ 
+ map = Map.new(4)
+ map[Vector.new(1,2)] = Wall.new(Vector.new(1,2))
+ map[Vector.new(1,3)] = Tunnel.new(Vector.new(1,3), Vector.new(3,0))
+ a = ComputeDistances.new
+ map_dist = a.bfs(map, Vector.new(0,0))
+ a_star = AStar.new(map, map_dist, Vector.new(2,2), Vector.new(0,0))
+ a_star.a_star
+ 
+ 
+ map = Map.new(4)
+ map[Vector.new(1,2)] = Wall.new(Vector.new(1,2))
+  map[Vector.new(1,1)] = Wall.new(Vector.new(1,1))
+ map[Vector.new(3,0)] = Tunnel.new(Vector.new(3,0), Vector.new(0,2))
+ a = ComputeDistances.new
+ map_dist = a.bfs(map, Vector.new(0,0))
+ a_star = AStar.new(map, map_dist, Vector.new(2,2), Vector.new(0,0))
+  a_star = AStar.new(map, map_dist, Vector.new(3,0), Vector.new(0,0))
+ a_star.a_star
+ 
+   a_star = AStar.new(map Vector.new(3,0), Vector.new(0,0))

@@ -1,13 +1,15 @@
+require "set"
 require_relative 'vector'
 require_relative 'world_objects'
+
 module SnakeGame
-	class ComputeCellPrices
-		NeighbourCells = [Vector.new(0, -1),
-									Vector.new(-1, 0),
-									Vector.new(1, 0),
-									Vector.new(0, 1),]
-	
-		def bfs(map, root)
+	NeighbourCells = [Vector.new(0, -1),
+								Vector.new(-1, 0),
+								Vector.new(1, 0),
+								Vector.new(0, 1),]
+								
+	class ComputeDistances
+			def self.bfs(map, root)
 			distance_map = Array.new(map.size) { Array.new(map.size) }
 			visited = {}
 			queue = Array.new
@@ -43,6 +45,134 @@ module SnakeGame
 			distance_map
 		end
 	end
+	
+	class AStar
+		INF = 1e20
+		attr_accessor :distance_from_start, :map_distances
+		def initialize(map, start_cell, target)
+			@target = target
+			@distance_from_start = Array.new(map.size) { Array.new(map.size, INF) }
+			@map = map
+			@map_distances = ComputeDistances.bfs(map, target)
+			@path = Array.new(map.size) { Array.new(map.size) }
+			
+			start = OrderVectorByDistance.new(start_cell, self)
+			@priority_set = SortedSet.new([start])
+			@distance_from_start[start.x][start.y] = 0
+		end
+		
+		
+#		def a_star#(start_cell, target)
+#			
+#			
+#			while not @priority_set.empty?
+#				front = @priority_set.each.first
+#				@priority_set.delete(front)
+#				
+#				#return @path if front == target
+#				return if front == @target
+#				
+#				neighbours = []
+#				#find out the neighbours
+#				NeighbourCells.each do |neighbour|
+#					neighbour += front
+#					neighbours.push(OrderVectorByDistance.new(neighbour))
+#				end
+#				#add one more neighbour when we have a tunnel 
+#				if @map[front].is_a? Tunnel
+#					neighbours.push(OrderVectorByDistance.new(@map[front].exit))
+#				end
+#				
+#				neighbours.each do |neighbour|
+#					if @map.in_bounds?(neighbour) and 
+#							not(@map[neighbour].is_a? Wall or @map[neighbour].is_a? SnakePart)
+#						#because we are moving always with one move
+#						new_distance = @distance_from_start[front.x][front.y] + 1 
+#						if @distance_from_start[neighbour.x][neighbour.y] > new_distance
+#							@priority_set.delete(neighbour)
+#							@distance_from_start[neighbour.x][neighbour.y] = new_distance
+#							#@path[neighbour.x][neighbour.y] = front
+#							@priority_set.add(neighbour)
+#							yield front
+#						end
+#					end
+#				end
+#			end
+#		end
+	def a_star
+		unless @priority_set.empty?
+			#puts "priority set:"
+			@priority_set.each { |i| puts i}
+			#p "end prior set"
+			front = @priority_set.each.first
+			#p front
+			@priority_set.delete(front)
+				
+			return true if front == @target
+				
+			neighbours = []
+			#find out the neighbours
+			NeighbourCells.each do |neighbour|
+				neighbour += front
+				neighbours.push(OrderVectorByDistance.new(neighbour, self))
+			end
+			#add one more neighbour when we have a tunnel 
+			if @map[front].is_a? Tunnel
+				neighbours.push(OrderVectorByDistance.new(@map[front].exit, self))
+			end
+				
+			neighbours.each do |neighbour|
+				if @map.in_bounds?(neighbour) and 
+						not(@map[neighbour].is_a? Wall or @map[neighbour].is_a? SnakePart)
+					#because we are moving always with one move
+					new_distance = @distance_from_start[front.x][front.y] + 1 
+					if @distance_from_start[neighbour.x][neighbour.y] > new_distance
+						@priority_set.delete(neighbour)
+						@distance_from_start[neighbour.x][neighbour.y] = new_distance
+						#@path[neighbour.x][neighbour.y] = front
+						@priority_set.add(neighbour)
+					end
+				end
+			end
+			front
+		end
+	end
+		
+		class OrderVectorByDistance < Vector
+			def initialize(vector, a_star)
+				super(vector.x, vector.y)
+				@a_star = a_star
+			end
+			
+			def distance(cell)
+				#puts "Distance method start"
+				dist = @a_star.distance_from_start[cell.x][cell.y]  + @a_star.map_distances[cell.x][cell.y]
+				#puts "Distance method " 
+				#puts dist
+				dist
+			end
+			
+			def <=>(other)
+				#puts "<=>"
+				#puts self
+				#puts other
+				current_dist = distance(self)
+				other_dist = distance(other)
+				result = current_dist <=> other_dist 
+				#puts current_dist
+				#puts other_dist
+				#p "<=> result is" 
+				#puts result
+				if result == 0 
+					self.hash <=> other.hash
+				else
+					result
+				end
+			end
+		end
+	end
+	
+
 	
 	class Map
 		attr_accessor :map, :size
