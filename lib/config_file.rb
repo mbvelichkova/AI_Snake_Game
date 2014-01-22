@@ -12,7 +12,5 @@ module SnakeGame
             2 => 'level_2.txt' }
     SCORE_LEVEL = { 1 => 20,
                     2 => 50 }
-    TIME_TO_NEW_LIFE = { 1 => 10,
-                        2 => 15 }
   end
 end

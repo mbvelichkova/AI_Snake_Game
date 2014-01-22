@@ -3,13 +3,13 @@ require_relative './vector'
 
 module SnakeGame
   class World
-    attr_reader :world, :life, :food
+    attr_reader :world, :life, :food, :tunnels
 
-    def initialize(width, map, time_to_new_life)
+    def initialize(width, world, food, tunnels)
       @world_size = width
-      @time_to_new_life = time_to_new_life
-      @local_time_to_new_life = @time_to_new_life
-      initialize_world(map)
+      @world = world
+			@food = food
+			@tunnels = tunnels
     end
 
     def [](position)
@@ -24,20 +24,6 @@ module SnakeGame
 
     def size
       @world_size
-    end
-
-    def update
-      update_food_remain_time_on_the_board
-      update_life_remain_time_on_the_board if @life
-
-      if @life == nil
-        @local_time_to_new_life = @local_time_to_new_life - 1
-        set_life if @local_time_to_new_life == 0
-      elsif @life.remain_time == 0
-        @world[@life.coords.x][@life.coords.y] = nil
-        @life = nil
-        @local_time_to_new_life = @time_to_new_life
-      end
     end
 
     def in_bounds?(position)
@@ -66,11 +52,6 @@ module SnakeGame
       @food.delete_at(food_index)
     end
 
-    def eat_life
-      @life = nil
-      @local_time_to_new_life = @time_to_new_life
-    end
-
     def to_s
       output = ''
       @world.each.with_index do |row, i|
@@ -84,60 +65,5 @@ module SnakeGame
       "#{output}"
     end
 
-    #private
-    def update_food_remain_time_on_the_board
-      @food.each.with_index do |food, i|
-        food.remain_time = food.remain_time - 1
-        if food.remain_time == 0
-          @world[food.coords.x][food.coords.y] = nil
-          update_food(food)
-        end
-      end
-    end
-
-    def update_life_remain_time_on_the_board
-      @life.remain_time = @life.remain_time - 1
-    end
-
-    def set_life
-      begin
-        x = Random.rand(@world_size)
-        y = Random.rand(@world_size)
-      end while @world[x][y]
-      coords = Vector.new(x,y)
-      @life = Life.new(coords)
-    end
-
-    def initialize_world(map)
-      @world = Array.new(@world_size) { Array.new(@world_size) }
-      @food = []
-      @life = nil
-      map.each.with_index do |row, i|
-        row.each.with_index do |object, j|
-          if object == '*'
-            @world[i][j] = nil
-          elsif object == 'O'
-            ordinary_food = OrdinaryFood.new(Vector.new(i, j))
-            @world[i][j] = ordinary_food
-            @food << ordinary_food
-          elsif object == 'S'
-            super_food = SuperFood.new(Vector.new(i, j))
-            @world[i][j] = super_food
-            @food << super_food
-          elsif object == 'W'
-            @world[i][j] = Wall.new(Vector.new(i, j))
-          elsif object == 'P'
-            snake_part = SnakePart.new(Vector.new(i, j))
-            @world[i][j] = snake_part
-          elsif object == 'H'
-            snake_head = SnakeHead.new(Vector.new(i, j))
-            @world[i][j] = snake_head
-          elsif object == 'L'
-            @life = Life.new(Vector.new(i, j))
-            @world[i][j] = life
-          end
-        end
-      end
-    end
   end
 end

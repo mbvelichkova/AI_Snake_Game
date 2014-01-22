@@ -10,50 +10,22 @@ module SnakeGame
   
   class Food < WorldObject
     attr_reader :energy, :set_food_count
-    attr_accessor :remain_time
     
-    def initialize(coords, energy, remain_time, set_food_count)
+    def initialize(coords, energy, set_food_count)
       @energy = energy
-      @remain_time = remain_time
       @set_food_count = set_food_count
       super(coords)
     end
   end
   
-  class SuperFood < Food
-    def initialize(coords)
-      super(coords, 3, 10, 3)
-      @image = 'S'
-    end
-    
-    def set_food(coords)
-      OrdinaryFood.new(coords)
-    end
-  end
-  
   class OrdinaryFood < Food
     def initialize(coords)
-      super(coords, 1, 15, 1)
+      super(coords, 1,  1)
       @image = 'O'
     end
     
     def set_food(coords)
-      random = Random.rand(10)
-      if random % 3 == 0
-        SuperFood.new(coords)
-      else
-        OrdinaryFood.new(coords)
-      end
-    end
-  end
-  
-  class Life < WorldObject
-    attr_accessor :remain_time
-    
-    def initialize(coords)
-      super(coords)
-      @remain_time = 17
-      @image = 'L'
+      OrdinaryFood.new(coords)
     end
   end
   

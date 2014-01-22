@@ -2,9 +2,6 @@ require_relative './world_objects'
 require_relative './world'
 
 module SnakeGame
-  class IllegalMove < RuntimeError
-  end
-
   class Snake
     attr_accessor :energy, :lives, :world, :body, :head, :direction
 
@@ -17,7 +14,11 @@ module SnakeGame
       @direction = direction
     end
 
-    def move(direction)
+    def move(position)
+			direction = position - @head 
+			puts "dir: "
+			puts direction
+			puts position
       if direction.opposite_direction(@direction)
         puts 'Opposite direction move is not allowed!'
         return
@@ -25,6 +26,10 @@ module SnakeGame
 
       @direction = direction
       new_position = @head + direction
+			
+			puts "new dir: "
+			puts @direction
+			puts new_position
       if not @world.in_bounds?(new_position)
         puts 'You are out of bounds!'
         return
@@ -37,8 +42,6 @@ module SnakeGame
           move_snake_body(new_position, false)
         when Wall, SnakePart
           lose_life
-        when Life
-          gain_life
         else
           move_snake_body(new_position, true)
       end
@@ -51,11 +54,6 @@ module SnakeGame
 
     def lose_life
       @lives = @lives - 1
-    end
-
-    def gain_life
-      @lives = @lives + 1
-      @world.eat_life
     end
 
     def dead?
