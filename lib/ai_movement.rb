@@ -49,16 +49,11 @@ module SnakeGame
 	class AStar
 		INF = 1e20
 		attr_accessor :distance_from_start, :map_distances
-		def initialize(map, start_cell, target)
+		def initialize(map, target)
 			@target = target
 			@distance_from_start = Array.new(map.size) { Array.new(map.size, INF) }
 			@map = map
 			@map_distances = ComputeDistances.bfs(map, target)
-			@path = Array.new(map.size) { Array.new(map.size) }
-			
-			start = OrderVectorByDistance.new(start_cell, self)
-			@priority_set = SortedSet.new([start])
-			@distance_from_start[start.x][start.y] = 0
 		end
 		
 		
@@ -99,14 +94,18 @@ module SnakeGame
 #				end
 #			end
 #		end
-	def a_star
-		unless @priority_set.empty?
+	def a_star(start_cell)
+		start = OrderVectorByDistance.new(start_cell, self)
+		priority_set = SortedSet.new([start])
+		@distance_from_start[start.x][start.y] = 0
+		
+		unless priority_set.empty?
 			#puts "priority set:"
-			@priority_set.each { |i| puts i}
+			priority_set.each { |i| puts i}
 			#p "end prior set"
-			front = @priority_set.each.first
+			front = priority_set.each.first
 			#p front
-			@priority_set.delete(front)
+			priority_set.delete(front)
 				
 			return true if front == @target
 				
@@ -127,14 +126,13 @@ module SnakeGame
 					#because we are moving always with one move
 					new_distance = @distance_from_start[front.x][front.y] + 1 
 					if @distance_from_start[neighbour.x][neighbour.y] > new_distance
-						@priority_set.delete(neighbour)
+						priority_set.delete(neighbour)
 						@distance_from_start[neighbour.x][neighbour.y] = new_distance
-						#@path[neighbour.x][neighbour.y] = front
-						@priority_set.add(neighbour)
+						priority_set.add(neighbour)
 					end
 				end
 			end
-			front
+			priority_set.each.first
 		end
 	end
 		
