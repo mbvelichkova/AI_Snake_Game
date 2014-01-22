@@ -3,15 +3,10 @@ require_relative './world_objects'
 
 module SnakeGame
   class IO
-    attr_reader :score, :lives, :direction, :snake_head, :snake_body, \
-		:world_size, :world, :tunnels, :food
+    attr_reader :world_size, :world, :tunnels, :food, :snakes
 
     def initialize
-      @score = 0
-      @lives = 0
-      @direction = nil
-      @snake_head = nil
-      @snake_body = []
+			@snakes = []
     end
 
     def read_file(filename)
@@ -26,13 +21,18 @@ module SnakeGame
       end
       begin
 				input = File.read(file)
-				categories = input.split("#")
+				categories = input.split("##")
       rescue IOError
         puts "Could not read from file"
       end
-			initiate_game_info(categories)
+			
+			categories.each do |category|
+					transform_snake_info(category) if /\A\d+/.match(category)
+			end
+			transform_map_info(categories[categories.size-1])
     end
 
+		#TODO: to be add func for more than one snake
     def write_file(filename, world, score, lives, direction, snake_head, snake_body, tunnels)
       output = File.open("..//data//" + filename, "w")
 			output.write("#Score" + "\n")
@@ -77,22 +77,32 @@ module SnakeGame
     end
 
     private
-		def initiate_game_info(categories)
+		def transform_snake_info(snakes_info)
+			info = snakes_info.split("#")
 			direction, snake_head_coords, snake_body_coords = "", "", ""
 			score, lives = 0, 0
-			tunnels_arr, map= [], []
-			categories.each do |category|
+			info.each do |category|
 				case category
 				when /\AScore/
-					@score = category.split("\n")[1].to_i
+					score = category.split("\n")[1]
 				when /\ALives/
-					@lives = category.split("\n")[1].to_i
+					lives = category.split("\n")[1]
 				when /\ADirection/
 					direction = category.split("\n")[1]
 				when /\ASnake Head/
 					snake_head_coords = category.split("\n")[1]
 				when /\ASnake Body/
 					snake_body_coords = category.split("\n")[1]
+				end
+			end
+			initialize_snake_info(score, lives, direction, snake_head_coords, snake_body_coords)
+		end
+		
+		def transform_map_info(info)
+			categories = info.split("#")
+			tunnels_arr, map= [], []
+			categories.each do |category|
+				case category
 				when /\ATunnels/
 					end_index = category.size
 					tunnels_arr = category.split("\n")[1..end_index]
@@ -102,7 +112,6 @@ module SnakeGame
 					@world_size = map.size
 				end
 			end
-			initialize_snake_body_coords(direction, snake_head_coords, snake_body_coords)
 			initialize_tunnels(tunnels_arr)
 			initialize_world(map)
 		end
@@ -122,17 +131,28 @@ module SnakeGame
 			end
 		end
 		
-    def initialize_snake_body_coords(direction, snake_head_coords, snake_body_coords)
+    def initialize_snake_info(score, lives, direction, snake_head_coords, snake_body_coords)
+			snake_info = {}
+			snake_body = []
+			
+			snake_info[:score] = score.to_i
+			snake_info[:lives] = lives.to_i
+			
       coords = direction.match(/(?<x>[0-9]+), (?<y>[0-9]+)/)
-      @direction = Vector.new(coords[:x].to_i, coords[:y].to_i) if coords
-
+      direction = Vector.new(coords[:x].to_i, coords[:y].to_i) if coords
+			snake_info[:direction] = direction
+			
       coords = snake_head_coords.match(/(?<x>[0-9]+), (?<y>[0-9]+)/)
-      @snake_head = Vector.new(coords[:x].to_i, coords[:y].to_i) if coords
-
+      snake_head = Vector.new(coords[:x].to_i, coords[:y].to_i) if coords
+			snake_info[:snake_head] = snake_head
+			
       snake_body_coords.split(';').each do |pair|
         coords = pair.match(/(?<x>[0-9]+), (?<y>[0-9]+)/)
-        @snake_body << Vector.new(coords[:x].to_i, coords[:y].to_i) if coords
+        snake_body << Vector.new(coords[:x].to_i, coords[:y].to_i) if coords
       end
+			snake_info[:snake_body] = snake_body
+			
+			@snakes << snake_info
     end
 		
 		def initialize_world(map)

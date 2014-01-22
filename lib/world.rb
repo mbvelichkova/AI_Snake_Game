@@ -50,7 +50,16 @@ module SnakeGame
       end
       food_index = @food.index(food)
       @food.delete_at(food_index)
+			
+			#update world
+			clear_tunnels
     end
+		
+		def clear_tunnels
+			@tunnels.each_value do |tunnel|
+				@world[tunnel.start.x][tunnel.start.y] = tunnel if @world[tunnel.start.x][tunnel.start.y]
+			end
+		end
 
     def to_s
       output = ''

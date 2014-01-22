@@ -34,7 +34,6 @@ module SnakeGame
 				neighbours.each do |neighbour|				
 					if map.in_bounds?(neighbour) and not visited[neighbour] 
 						unless map[neighbour].is_a? Wall
-							puts neighbour
 							queue.push(neighbour)
 							visited[neighbour] = true
 							distance_map[neighbour.x][neighbour.y] = distance_map[cell.x][cell.y] + 1
@@ -62,11 +61,10 @@ module SnakeGame
 		@distance_from_start[start.x][start.y] = 0
 		
 		unless priority_set.empty?
-			priority_set.each { |i| puts i}
 			front = priority_set.each.first
 			priority_set.delete(front)
 				
-			return true if front == @target
+			return nil if front == @target
 				
 			neighbours = []
 			#find out the neighbours

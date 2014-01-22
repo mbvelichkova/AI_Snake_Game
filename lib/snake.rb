@@ -16,9 +16,6 @@ module SnakeGame
 
     def move(position)
 			direction = position - @head 
-			puts "dir: "
-			puts direction
-			puts position
       if direction.opposite_direction(@direction)
         puts 'Opposite direction move is not allowed!'
         return
@@ -27,9 +24,6 @@ module SnakeGame
       @direction = direction
       new_position = @head + direction
 			
-			puts "new dir: "
-			puts @direction
-			puts new_position
       if not @world.in_bounds?(new_position)
         puts 'You are out of bounds!'
         return
