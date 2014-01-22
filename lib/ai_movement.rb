@@ -56,55 +56,14 @@ module SnakeGame
 			@map_distances = ComputeDistances.bfs(map, target)
 		end
 		
-		
-#		def a_star#(start_cell, target)
-#			
-#			
-#			while not @priority_set.empty?
-#				front = @priority_set.each.first
-#				@priority_set.delete(front)
-#				
-#				#return @path if front == target
-#				return if front == @target
-#				
-#				neighbours = []
-#				#find out the neighbours
-#				NeighbourCells.each do |neighbour|
-#					neighbour += front
-#					neighbours.push(OrderVectorByDistance.new(neighbour))
-#				end
-#				#add one more neighbour when we have a tunnel 
-#				if @map[front].is_a? Tunnel
-#					neighbours.push(OrderVectorByDistance.new(@map[front].exit))
-#				end
-#				
-#				neighbours.each do |neighbour|
-#					if @map.in_bounds?(neighbour) and 
-#							not(@map[neighbour].is_a? Wall or @map[neighbour].is_a? SnakePart)
-#						#because we are moving always with one move
-#						new_distance = @distance_from_start[front.x][front.y] + 1 
-#						if @distance_from_start[neighbour.x][neighbour.y] > new_distance
-#							@priority_set.delete(neighbour)
-#							@distance_from_start[neighbour.x][neighbour.y] = new_distance
-#							#@path[neighbour.x][neighbour.y] = front
-#							@priority_set.add(neighbour)
-#							yield front
-#						end
-#					end
-#				end
-#			end
-#		end
 	def a_star(start_cell)
 		start = OrderVectorByDistance.new(start_cell, self)
 		priority_set = SortedSet.new([start])
 		@distance_from_start[start.x][start.y] = 0
 		
 		unless priority_set.empty?
-			#puts "priority set:"
 			priority_set.each { |i| puts i}
-			#p "end prior set"
 			front = priority_set.each.first
-			#p front
 			priority_set.delete(front)
 				
 			return true if front == @target
@@ -143,24 +102,14 @@ module SnakeGame
 			end
 			
 			def distance(cell)
-				#puts "Distance method start"
 				dist = @a_star.distance_from_start[cell.x][cell.y]  + @a_star.map_distances[cell.x][cell.y]
-				#puts "Distance method " 
-				#puts dist
 				dist
 			end
 			
 			def <=>(other)
-				#puts "<=>"
-				#puts self
-				#puts other
 				current_dist = distance(self)
 				other_dist = distance(other)
 				result = current_dist <=> other_dist 
-				#puts current_dist
-				#puts other_dist
-				#p "<=> result is" 
-				#puts result
 				if result == 0 
 					self.hash <=> other.hash
 				else
