@@ -20,4 +20,12 @@
   a_star = AStar.new(map, map_dist, Vector.new(3,0), Vector.new(0,0))
  a_star.a_star
  
-   a_star = AStar.new(map Vector.new(3,0), Vector.new(0,0))
+   a_star = AStar.new(map, Vector.new(3,0), Vector.new(0,0))
+   
+   
+   
+ ##  test io changes
+   load "io_parser.rb"
+   io = SnakeGame::IO.new
+   io.read_file("level_1.txt")
+   
