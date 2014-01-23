@@ -57,7 +57,7 @@ module SnakeGame
 		
 		def clear_tunnels
 			@tunnels.each_value do |tunnel|
-				@world[tunnel.start.x][tunnel.start.y] = tunnel if @world[tunnel.start.x][tunnel.start.y]
+				@world[tunnel.start.x][tunnel.start.y] = tunnel unless @world[tunnel.start.x][tunnel.start.y]
 			end
 		end
 

@@ -23,7 +23,7 @@ module SnakeGame
 				input = File.read(file)
 				categories = input.split("##")
       rescue IOError
-        puts "Could not read from file"
+        "Could not read from file"
       end
 			
 			categories.each do |category|
@@ -68,7 +68,7 @@ module SnakeGame
           begin
             output.write(image)
           rescue IOError
-            puts "Could not write to file"
+            "Could not write to file"
           end
         end
         output.write("\n") if i < (world.size - 1)

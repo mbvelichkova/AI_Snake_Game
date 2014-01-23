@@ -17,28 +17,30 @@ module SnakeGame
     def move(position)
 			direction = position - @head 
       if direction.opposite_direction(@direction)
-        puts 'Opposite direction move is not allowed!'
-        return
+				puts'Opposite direction move is not allowed!'
+				return
       end
 
       @direction = direction
       new_position = @head + direction
 			
       if not @world.in_bounds?(new_position)
-        puts 'You are out of bounds!'
-        return
+        puts'You are out of bounds!' 
+				return
       end
-
+			
       object = @world[new_position]
+			move_over_tunnel = object.is_a? Tunnel
       case object
         when Food
           eat_food(object)
-          move_snake_body(new_position, false)
+          move_snake_body(new_position, false, move_over_tunnel)
         when Wall, SnakePart
           lose_life
         else
-          move_snake_body(new_position, true)
+          move_snake_body(new_position, true, move_over_tunnel)
       end
+			nil
     end
 
     def eat_food(food)
@@ -56,8 +58,8 @@ module SnakeGame
 
     private
 
-    def move_snake_body(position, free_last)
-      place_snake_head(position)
+    def move_snake_body(position, free_last, move_over_tunnel)
+      place_snake_head(position, move_over_tunnel)
       if free_last
         last = @body.pop
         @world[last] = nil
@@ -66,11 +68,12 @@ module SnakeGame
 
     # First mark as snake part the position where
     # the head is, and then move the head.
-    def place_snake_head(position)
+    def place_snake_head(position, move_over_tunnel)
       snake_part = SnakePart.new(@head)
       @world[@head] = snake_part
       @head = position
       @world[position] = SnakeHead.new(position)
+			@world[position].set_over_tunnel(move_over_tunnel)
       @body.unshift @head
     end
   end

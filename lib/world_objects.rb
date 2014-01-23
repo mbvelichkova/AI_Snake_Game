@@ -44,10 +44,17 @@ module SnakeGame
   end
   
   class SnakeHead < SnakePart
+		attr_accessor :over_tunnel
     def initialize(coords)
       super
       @image = 'H'
+			@over_tunnel = false
     end
+		
+		def set_over_tunnel(bool)
+			@over_tunnel = bool
+			@image = bool ? '[H]' : 'H'
+		end
   end
 	
 	class Tunnel < WorldObject
