@@ -19,7 +19,7 @@ class GameLoop
 			
       game = ConsoleGame.new(score, map_number)
 			
-			print "Choose your snake as entering a number. Or leave it empty and watch the game."
+			print "Choose your snake as entering a number. Or leave it empty and watch the game.\n"
 			STDOUT.flush
       auto_play = gets.chomp == "" ? true : false
 			player = gets.chomp.to_i
