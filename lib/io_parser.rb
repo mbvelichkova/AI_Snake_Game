@@ -32,50 +32,6 @@ module SnakeGame
 			transform_map_info(categories[categories.size-1])
     end
 
-		#TODO: to be add func for more than one snake
-    def write_file(filename, world, score, lives, direction, snake_head, snake_body, tunnels)
-      output = File.open("..//data//" + filename, "w")
-			output.write("#Score" + "\n")
-      output.write(score.to_s + "\n")
-			
-			output.write("#Lives" + "\n")
-      output.write(lives.to_s + "\n")
-			
-			output.write("#Direction" + "\n")
-      output.write(direction.to_s + "\n")
-			
-			output.write("#Snake Head" + "\n")
-      output.write(snake_head.to_s + "\n")
-			
-			output.write("#Snake Body" + "\n")
-      snake_body.each do |snake_part|
-        output.write(snake_part.to_s + "; ")
-      end
-      output.write("\n")
-			
-			output.write("#Tunnels" + "\n")
-			tunnels.each_value do |info|
-				start = info.start.to_s
-				exit = info.exit.to_s
-				output.write(start + "; " + exit + "\n")
-			end
-			
-			output.write("#Map" + "\n")
-      world.each.with_index do |row, i|
-        row.each.with_index do |object, j|
-          image = object ? object.image : '*'
-          image << " " if j < (row.size - 1)
-          begin
-            output.write(image)
-          rescue IOError
-            "Could not write to file"
-          end
-        end
-        output.write("\n") if i < (world.size - 1)
-      end
-      output.close
-    end
-
     private
 		def transform_snake_info(snakes_info)
 			info = snakes_info.split("#")

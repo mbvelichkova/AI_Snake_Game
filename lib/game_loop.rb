@@ -6,20 +6,23 @@ class GameLoop
 		
     def self.main_loop
       print "Type \'exit\' to quit the game or \'restart\' to restart it! You can leave it empty and use default settings.\n"
-			STDIN.flush
-			print "Choose game map! Enter 1 or 2.\n"
-			STDOUT.flush
+			print "Choose game map! Enter 1 or 2: "
+      STDOUT.flush
       map_number = gets.chomp == "" ? 1 : gets.to_i
 			print "You choose game map " + map_number.to_s + "\n"
 			
-			print "Choose winning score! Enter a number. You can leave it empty and use default settings.\n"
-			STDOUT.flush
-      score = gets.chomp == "" ? 15 : gets.chomp.to_i
-			print "You choose winning score to be " + score.to_s
+			print "Choose winning score! You can leave it empty and use default settings.\n"
+      print "Enter a number: "
+      STDOUT.flush
+      input = gets.chomp 
+      score = input == "" ? 15 : gets.chomp.to_i
+      
+			print "You choose winning score to be " + score.to_s + "\n"
 			
       game = ConsoleGame.new(score, map_number)
 			
-			print "Choose your snake as entering a number. Or leave it empty and watch the game.\n"
+			print "Choose your snake. Or leave it empty and watch the game.\n"
+      print "Entering a number: "
 			STDOUT.flush
       auto_play = gets.chomp == "" ? true : false
 			player = gets.chomp.to_i

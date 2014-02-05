@@ -36,7 +36,7 @@ module SnakeGame
 						unless map[neighbour].is_a? Wall
 							queue.push(neighbour)
 							visited[neighbour] = true
-							distance_map[neighbour.x][neighbour.y] = distance_map[cell.x][cell.y] + 1
+							distance_map[neighbour.x][neighbour.y] = distance_map[cell.x][cell.y] + 1 #because they are always neighbour cells
 						end
 					end
 				end
@@ -83,6 +83,7 @@ module SnakeGame
 					#because we are moving always with one move
 					new_distance = @distance_from_start[front.x][front.y] + 1 
 					if @distance_from_start[neighbour.x][neighbour.y] > new_distance
+            #update distance
 						priority_set.delete(neighbour)
 						@distance_from_start[neighbour.x][neighbour.y] = new_distance
 						priority_set.add(neighbour)
@@ -118,7 +119,7 @@ module SnakeGame
 	end
 	
 
-	
+	#test class
 	class Map
 		attr_accessor :map, :size
 		

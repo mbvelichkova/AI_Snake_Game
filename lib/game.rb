@@ -28,12 +28,6 @@ module SnakeGame
       snake.move(position)
     end
 		
-		#TODO: not actual
-    def save_game(filename)
-      map = IO.new
-      map.write_file(filename, @world.world, @score, @snake.lives, @snake.direction, @snake.head, @snake.body)
-    end
-		
 		def init_ai
 			@ai = AStar.new(@world, @world.food[0].coords)
 		end
